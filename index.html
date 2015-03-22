@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Decreasing Fuel Consumption</title>
+  <meta charset="utf-8">
+  <meta name="description" content="Decreasing Fuel Consumption">
+  <meta name="author" content="Marc Emanuel">
+  <meta name="generator" content="slidify" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <link rel="stylesheet" href="libraries/frameworks/io2012/css/default.css" media="all" >
+  <link rel="stylesheet" href="libraries/frameworks/io2012/css/phone.css" 
+    media="only screen and (max-device-width: 480px)" >
+  <link rel="stylesheet" href="libraries/frameworks/io2012/css/slidify.css" >
+  <link rel="stylesheet" href="libraries/highlighters/highlight.js/css/tomorrow.css" />
+  <base target="_blank"> <!-- This amazingness opens all links in a new tab. -->  <link rel=stylesheet href="./assets/css/ribbons.css"></link>
+
+  
+  <!-- Grab CDN jQuery, fall back to local if offline -->
+  <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.7.min.js"></script>
+  <script>window.jQuery || document.write('<script src="libraries/widgets/quiz/js/jquery.js"><\/script>')</script> 
+  <script data-main="libraries/frameworks/io2012/js/slides" 
+    src="libraries/frameworks/io2012/js/require-1.0.8.min.js">
+  </script>
+  
+  
+
+</head>
+<body style="opacity: 0">
+  <slides class="layout-widescreen">
+    
+    <!-- LOGO SLIDE -->
+        <slide class="title-slide segue nobackground">
+  <aside class="gdbar">
+    <img src="assets/img/logo.gif">
+  </aside>
+  <hgroup class="auto-fadein">
+    <h1>Decreasing Fuel Consumption</h1>
+    <h2>a community supported effort to decrease pollution</h2>
+    <p>Marc Emanuel<br/></p>
+  </hgroup>
+  <article></article>  
+</slide>
+    
+
+    <!-- SLIDES -->
+    <slide class="" id="slide-1" style="background:;">
+  <hgroup>
+    <h2>The Problem: unreliable data from industry</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>Industry rigging of measurements: </p>
+
+<ol>
+<li> Using special lubricants</li>
+<li> Using special tyres</li>
+<li> Nearly empty fuel tank and skinny drivers</li>
+<li> Empty roads allowing for continuous speed</li>
+<li> Down hill and rear wind</li>
+<li> Gasoline additives</li>
+<li> Exceptional chiptuning</li>
+</ol>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="class" id="id" style="background:;">
+  <hgroup>
+    <h2>The solution</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>Buid a database updated by registered users</p>
+
+<ol>
+<li> Real use fuel consumption.</li>
+<li> Captures also the variance in consumption.</li>
+<li> Provides a predictive model to which the user can compare.</li>
+<li> Visual feedback how car is ranked.</li>
+<li> Attempts to influence the data is countered by anomaly detection.</li>
+<li> International database with a choice of units.</li>
+</ol>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="class" id="id" style="background:;">
+  <hgroup>
+    <h2>Technology used</h2>
+  </hgroup>
+  <article data-timings="">
+    <ul>
+<li>A first data set i created from the mtcars data set:</li>
+<li><p>Redundant features dropped:</p>
+
+<pre><code>- carb : nowadays mostly fuel injection
+- vs : more for damping vibrations. Other types possible(e.g. boxer) 
+- drat,hp,qsec: highly correlated with other features.
+</code></pre></li>
+<li><p>fast model generation with linear regression, updated after each car addition</p></li>
+<li><p>density plot recallibrated.</p></li>
+</ul>
+
+<pre><code class="r">select&lt;-c(TRUE,TRUE,TRUE,FALSE,FALSE,TRUE,FALSE,FALSE,TRUE,TRUE,FALSE)
+mycars&lt;-mtcars[,select]    # selecting initiation db
+kernel&lt;-&quot;gaussian&quot;;points&lt;-1;dof&lt;-32  # user adjustable density plot smoothness
+dens &lt;- density(mycars$mpg, bw = &quot;SJ&quot;, kernel = kernel, points)
+spl &lt;- smooth.spline(dens$x, dens$y, df=dof, keep.data=FALSE)
+</code></pre>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="class" id="id" style="background:;">
+  <article data-timings="">
+    <pre><code class="r">library(ggplot2)
+c &lt;- predict(spl, mycars$mpg);data&lt;-data.frame(mpg=c$x,density=c$y,consumption=1/c$x)
+ggplot(data,aes(mpg,density)) +geom_point(aes(size=consumption))
+</code></pre>
+
+<p><img src="assets/fig/unnamed-chunk-2-1.png" alt="plot of chunk unnamed-chunk-2"> </p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="class" id="id" style="background:;">
+  <hgroup>
+    <h2>Conclusion and future developments</h2>
+  </hgroup>
+  <article data-timings="">
+    <ul>
+<li> Lean system easy to deploy</li>
+<li> Need to implement locked interface</li>
+<li> Only members can add cars </li>
+<li> Implement anomaly detection</li>
+<li> Add additional features , year, turbo, hybride ,....</li>
+</ul>
+
+<h3><strong>THANK YOU!</strong></h3>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+    <slide class="backdrop"></slide>
+  </slides>
+  <div class="pagination pagination-small" id='io2012-ptoc' style="display:none;">
+    <ul>
+      <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=1 title='The Problem: unreliable data from industry'>
+         1
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=2 title='The solution'>
+         2
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=3 title='Technology used'>
+         3
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=4 title=''>
+         4
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=5 title='Conclusion and future developments'>
+         5
+      </a>
+    </li>
+  </ul>
+  </div>  <!--[if IE]>
+    <script 
+      src="http://ajax.googleapis.com/ajax/libs/chrome-frame/1/CFInstall.min.js">  
+    </script>
+    <script>CFInstall.check({mode: 'overlay'});</script>
+  <![endif]-->
+</body>
+  <!-- Load Javascripts for Widgets -->
+  
+  <!-- LOAD HIGHLIGHTER JS FILES -->
+  <script src="libraries/highlighters/highlight.js/highlight.pack.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+  <!-- DONE LOADING HIGHLIGHTER JS FILES -->
+   
+  </html>
